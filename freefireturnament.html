@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booyah98 - Tournament App</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #1a1a2e;
+            color: #e0e0e0;
+        }
+        .main-container {
+            max-width: 420px;
+            margin: auto;
+            background-color: #16213e;
+            min-height: 100vh;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+        }
+        .page {
+            display: none;
+        }
+        .page.active {
+            display: block;
+        }
+        .btn-primary {
+            background: linear-gradient(90deg, #e94560, #ff7171);
+            color: white;
+            font-weight: bold;
+            border-radius: 8px;
+            padding: 12px;
+            text-align: center;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(233, 69, 96, 0.4);
+        }
+        .btn-secondary {
+            background-color: #0f3460;
+            color: #e0e0e0;
+            border: 1px solid #1f4068;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px;
+            border-radius: 8px;
+        }
+        .card {
+            background-color: #1f294a;
+            border-radius: 12px;
+            border: 1px solid #2a3b64;
+        }
+        .nav-item {
+            transition: all 0.2s ease;
+        }
+        .nav-item.active {
+            color: #e94560;
+            border-bottom: 2px solid #e94560;
+        }
+        .nav-item:not(.active) {
+            color: #a0a0c0;
+        }
+        .modal-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0,0,0,0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 50;
+            backdrop-filter: blur(4px);
+        }
+        .modal-content {
+            background-color: #1f294a;
+            padding: 20px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 380px;
+            border: 1px solid #2a3b64;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="main-container">
+
+        <!-- Header -->
+        <header class="p-4 flex justify-between items-center bg-[#16213e] sticky top-0 z-10 border-b border-gray-700">
+            <h1 class="text-2xl font-extrabold text-white tracking-wider">Booyah<span class="text-[#e94560]">98</span></h1>
+            <div class="flex items-center space-x-4">
+                <div id="wallet-icon" class="cursor-pointer">
+                    <i data-lucide="wallet" class="w-6 h-6 text-gray-300"></i>
+                </div>
+                <div id="profile-icon" class="cursor-pointer">
+                    <i data-lucide="user-circle-2" class="w-7 h-7 text-gray-300"></i>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="p-4">
+            <!-- Home Page -->
+            <div id="home-page" class="page active">
+                <div class="mb-6">
+                    <img src="https://placehold.co/600x300/1a1a2e/e94560?text=Welcome+to+Booyah98" alt="Welcome Banner" class="rounded-lg w-full">
+                </div>
+                
+                <h2 class="text-xl font-bold mb-4 text-center">Choose Your Battleground</h2>
+
+                <div class="space-y-4">
+                    <div id="go-to-matches" class="card p-4 flex items-center space-x-4 cursor-pointer hover:bg-[#2a3b64] transition-all">
+                        <i data-lucide="swords" class="w-10 h-10 text-[#e94560]"></i>
+                        <div>
+                            <h3 class="font-bold text-lg">Instant Matches</h3>
+                            <p class="text-sm text-gray-400">Clash Squad action, available 24/7. Join anytime!</p>
+                        </div>
+                    </div>
+
+                    <div id="go-to-br" class="card p-4 flex items-center space-x-4 cursor-pointer hover:bg-[#2a3b64] transition-all">
+                        <i data-lucide="shield" class="w-10 h-10 text-[#e94560]"></i>
+                        <div>
+                            <h3 class="font-bold text-lg">Battle Royale Tournaments</h3>
+                            <p class="text-sm text-gray-400">The ultimate survival test on Bermuda. Solo & Squad.</p>
+                        </div>
+                    </div>
+
+                    <div id="go-to-cs" class="card p-4 flex items-center space-x-4 cursor-pointer hover:bg-[#2a3b64] transition-all">
+                        <i data-lucide="users" class="w-10 h-10 text-[#e94560]"></i>
+                        <div>
+                            <h3 class="font-bold text-lg">Clash Squad Tournaments</h3>
+                            <p class="text-sm text-gray-400">4v4 team battles. New tournament every 30 mins.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Matches Page -->
+            <div id="matches-page" class="page">
+                <h2 class="text-xl font-bold mb-4">Instant Matches (Clash Squad)</h2>
+                <div class="space-y-4">
+                    <!-- Solo Match Card -->
+                    <div class="card p-4">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <h3 class="font-bold text-lg">Solo Match</h3>
+                                <p class="text-sm text-gray-400">Map: Bermuda</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="font-semibold text-green-400">Prize: ₹40</p>
+                                <p class="text-xs text-gray-400">Per Kill: ₹5</p>
+                            </div>
+                        </div>
+                        <div class="mt-4 flex space-x-2">
+                            <button class="join-match-btn flex-1 btn-primary text-sm !p-2" data-type="solo" data-fee="10">Join (₹10)</button>
+                            <button class="join-match-btn flex-1 btn-secondary rounded-lg p-2 text-sm" data-type="solo" data-fee="ads">Watch 5 Ads to Join</button>
+                        </div>
+                    </div>
+                    <!-- Duo Match Card -->
+                    <div class="card p-4">
+                        <h3 class="font-bold text-lg">Duo Match</h3>
+                        <p class="text-sm text-gray-400">Map: Bermuda</p>
+                        <div class="flex justify-between items-center mt-2">
+                            <p class="font-semibold text-green-400">Prize Pool: ₹100</p>
+                            <p class="font-semibold text-yellow-400">Entry: ₹20 / team</p>
+                        </div>
+                        <button class="join-match-btn mt-4 w-full btn-primary" data-type="duo" data-fee="20">Join Team (₹20)</button>
+                    </div>
+                    <!-- Squad Match Card -->
+                    <div class="card p-4">
+                        <h3 class="font-bold text-lg">Squad Match</h3>
+                        <p class="text-sm text-gray-400">Map: Bermuda</p>
+                        <div class="flex justify-between items-center mt-2">
+                            <p class="font-semibold text-green-400">Prize Pool: ₹200</p>
+                            <p class="font-semibold text-yellow-400">Entry: ₹40 / team</p>
+                        </div>
+                        <button class="join-match-btn mt-4 w-full btn-primary" data-type="squad" data-fee="40">Join Team (₹40)</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Battle Royale Tournaments Page -->
+            <div id="br-page" class="page">
+                <h2 class="text-xl font-bold mb-4">Battle Royale Tournaments</h2>
+                <!-- Solo BR Tournament -->
+                <div class="card p-4 mb-4">
+                    <h3 class="font-bold text-lg">SOLO - Bermuda Championship</h3>
+                    <div class="flex justify-between text-sm text-gray-300 mt-2">
+                        <span><i data-lucide="calendar" class="inline w-4 h-4 mr-1"></i>Today, 8:00 PM</span>
+                        <span><i data-lucide="map-pin" class="inline w-4 h-4 mr-1"></i>Map: Bermuda</span>
+                    </div>
+                    <div class="mt-3 bg-[#16213e] p-3 rounded-lg">
+                        <div class="flex justify-between items-center">
+                           <div>
+                               <p class="text-xs text-gray-400">Prize Pool</p>
+                               <p class="font-bold text-xl text-green-400">₹5,000</p>
+                           </div>
+                           <div>
+                               <p class="text-xs text-gray-400">Entry Fee</p>
+                               <p class="font-bold text-xl text-yellow-400">₹10</p>
+                           </div>
+                        </div>
+                         <div class="w-full bg-gray-600 rounded-full h-2.5 mt-2">
+                            <div class="bg-blue-500 h-2.5 rounded-full" style="width: 45%"></div>
+                        </div>
+                        <p class="text-xs text-center mt-1">22/50 players joined</p>
+                    </div>
+                    <div class="mt-4 flex space-x-2">
+                        <button class="join-match-btn flex-1 btn-primary" data-type="br-solo" data-fee="10">Join (₹10)</button>
+                        <button class="join-match-btn flex-1 btn-secondary rounded-lg p-2" data-type="br-solo" data-fee="ads">Watch 5 Ads</button>
+                    </div>
+                </div>
+                <!-- Squad BR Tournament -->
+                <div class="card p-4">
+                    <h3 class="font-bold text-lg">SQUAD - Ultimate Booyah</h3>
+                     <div class="flex justify-between text-sm text-gray-300 mt-2">
+                        <span><i data-lucide="calendar" class="inline w-4 h-4 mr-1"></i>Today, 9:00 PM</span>
+                        <span><i data-lucide="map-pin" class="inline w-4 h-4 mr-1"></i>Map: Bermuda</span>
+                    </div>
+                    <div class="mt-3 bg-[#16213e] p-3 rounded-lg">
+                        <div class="flex justify-between items-center">
+                           <div>
+                               <p class="text-xs text-gray-400">Prize Pool</p>
+                               <p class="font-bold text-xl text-green-400">₹10,000</p>
+                           </div>
+                           <div>
+                               <p class="text-xs text-gray-400">Entry Fee</p>
+                               <p class="font-bold text-xl text-yellow-400">₹80 / team</p>
+                           </div>
+                        </div>
+                         <div class="w-full bg-gray-600 rounded-full h-2.5 mt-2">
+                            <div class="bg-orange-500 h-2.5 rounded-full" style="width: 80%"></div>
+                        </div>
+                        <p class="text-xs text-center mt-1">40/50 teams joined</p>
+                    </div>
+                    <button class="join-match-btn mt-4 w-full btn-primary" data-type="br-squad" data-fee="80">Register Squad (₹80)</button>
+                </div>
+            </div>
+
+            <!-- Clash Squad Tournaments Page -->
+            <div id="cs-page" class="page">
+                <h2 class="text-xl font-bold mb-4">Clash Squad Tournaments (4v4)</h2>
+                 <div class="card p-4 mb-4">
+                    <h3 class="font-bold text-lg">CS Quick Battle</h3>
+                     <div class="flex justify-between text-sm text-gray-300 mt-2">
+                        <span><i data-lucide="clock" class="inline w-4 h-4 mr-1"></i>Starts in: 12m 34s</span>
+                        <span><i data-lucide="map-pin" class="inline w-4 h-4 mr-1"></i>Map: Bermuda</span>
+                    </div>
+                    <div class="mt-3 bg-[#16213e] p-3 rounded-lg">
+                        <div class="flex justify-between items-center">
+                           <div>
+                               <p class="text-xs text-gray-400">Prize Pool</p>
+                               <p class="font-bold text-xl text-green-400">₹1,000</p>
+                           </div>
+                           <div>
+                               <p class="text-xs text-gray-400">Entry Fee</p>
+                               <p class="font-bold text-xl text-yellow-400">₹40 / team</p>
+                           </div>
+                        </div>
+                         <div class="w-full bg-gray-600 rounded-full h-2.5 mt-2">
+                            <div class="bg-purple-500 h-2.5 rounded-full" style="width: 62%"></div>
+                        </div>
+                        <p class="text-xs text-center mt-1">10/16 teams joined</p>
+                    </div>
+                    <button class="join-match-btn mt-4 w-full btn-primary" data-type="cs-squad" data-fee="40">Register Squad (₹40)</button>
+                </div>
+                 <div class="card p-4">
+                    <h3 class="font-bold text-lg">CS Evening Showdown</h3>
+                     <div class="flex justify-between text-sm text-gray-300 mt-2">
+                        <span><i data-lucide="clock" class="inline w-4 h-4 mr-1"></i>Starts in: 42m 10s</span>
+                        <span><i data-lucide="map-pin" class="inline w-4 h-4 mr-1"></i>Map: Bermuda</span>
+                    </div>
+                    <div class="mt-3 bg-[#16213e] p-3 rounded-lg">
+                        <div class="flex justify-between items-center">
+                           <div>
+                               <p class="text-xs text-gray-400">Prize Pool</p>
+                               <p class="font-bold text-xl text-green-400">₹1,000</p>
+                           </div>
+                           <div>
+                               <p class="text-xs text-gray-400">Entry Fee</p>
+                               <p class="font-bold text-xl text-yellow-400">₹40 / team</p>
+                           </div>
+                        </div>
+                         <div class="w-full bg-gray-600 rounded-full h-2.5 mt-2">
+                            <div class="bg-gray-400 h-2.5 rounded-full" style="width: 5%"></div>
+                        </div>
+                        <p class="text-xs text-center mt-1">1/16 teams joined</p>
+                    </div>
+                    <button class="join-match-btn mt-4 w-full btn-primary" data-type="cs-squad" data-fee="40">Register Squad (₹40)</button>
+                </div>
+            </div>
+            
+            <!-- Results Page -->
+            <div id="results-page" class="page">
+                <h2 class="text-xl font-bold mb-4">Tournament Results</h2>
+                <div class="card p-4">
+                     <h3 class="font-bold text-lg">SOLO - Bermuda Championship</h3>
+                     <p class="text-xs text-gray-400 mb-3">Completed: Yesterday, 8:00 PM</p>
+                     <div class="space-y-2">
+                        <div class="flex items-center justify-between bg-[#16213e] p-2 rounded-lg">
+                            <div class="flex items-center">
+                                <span class="font-bold text-yellow-400 mr-3">1st</span>
+                                <img src="https://placehold.co/40x40/e94560/ffffff?text=P" class="w-8 h-8 rounded-full mr-3">
+                                <span>ProPlayer123</span>
+                            </div>
+                            <span class="font-bold text-green-400">+ ₹2,500</span>
+                        </div>
+                        <div class="flex items-center justify-between bg-[#16213e] p-2 rounded-lg">
+                            <div class="flex items-center">
+                                <span class="font-bold text-gray-300 mr-3">2nd</span>
+                                <img src="https://placehold.co/40x40/0f3460/ffffff?text=G" class="w-8 h-8 rounded-full mr-3">
+                                <span>GamerX</span>
+                            </div>
+                            <span class="font-bold text-green-400">+ ₹1,250</span>
+                        </div>
+                         <div class="flex items-center justify-between bg-[#16213e] p-2 rounded-lg">
+                            <div class="flex items-center">
+                                <span class="font-bold text-orange-400 mr-3">3rd</span>
+                                <img src="https://placehold.co/40x40/1f4068/ffffff?text=S" class="w-8 h-8 rounded-full mr-3">
+                                <span>Shadow</span>
+                            </div>
+                            <span class="font-bold text-green-400">+ ₹500</span>
+                        </div>
+                     </div>
+                </div>
+            </div>
+
+            <!-- Profile Page -->
+            <div id="profile-page" class="page">
+                <h2 class="text-xl font-bold mb-4">My Profile</h2>
+                <div class="card p-4 text-center">
+                    <img src="https://placehold.co/100x100/e94560/ffffff?text=SG" class="w-24 h-24 rounded-full mx-auto mb-4 border-4 border-[#e94560]">
+                    <h3 class="text-2xl font-bold">Subhajit Gorai</h3>
+                    <p class="text-gray-400">Player ID: FF_12345678</p>
+                </div>
+                
+                <div id="wallet-section" class="card p-4 mt-4">
+                    <h3 class="font-bold text-lg mb-2">My Wallet</h3>
+                    <div class="bg-[#16213e] p-4 rounded-lg text-center">
+                        <p class="text-gray-400">Current Balance</p>
+                        <p class="text-4xl font-extrabold text-green-400">₹550.00</p>
+                    </div>
+                    <div class="flex space-x-4 mt-4">
+                        <button id="deposit-btn" class="flex-1 btn-primary"><i data-lucide="arrow-down-circle"></i>Deposit</button>
+                        <button id="withdraw-btn" class="flex-1 btn-secondary"><i data-lucide="arrow-up-circle"></i>Withdraw</button>
+                    </div>
+                </div>
+
+                <div class="card p-4 mt-4">
+                    <h3 class="font-bold text-lg mb-2">Support & Info</h3>
+                    <div class="space-y-3">
+                        <a href="#" class="flex items-center justify-between p-3 bg-[#16213e] rounded-lg">
+                            <span><i data-lucide="history" class="inline w-5 h-5 mr-2"></i>Match History</span>
+                            <i data-lucide="chevron-right" class="w-5 h-5"></i>
+                        </a>
+                        <a href="#" id="support-btn" class="flex items-center justify-between p-3 bg-[#16213e] rounded-lg">
+                            <span><i data-lucide="help-circle" class="inline w-5 h-5 mr-2"></i>Customer Support</span>
+                            <i data-lucide="chevron-right" class="w-5 h-5"></i>
+                        </a>
+                        <a href="#" class="flex items-center justify-between p-3 bg-[#16213e] rounded-lg">
+                            <span><i data-lucide="log-out" class="inline w-5 h-5 mr-2"></i>Logout</span>
+                            <i data-lucide="chevron-right" class="w-5 h-5"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+
+        <!-- Bottom Navigation -->
+        <nav class="grid grid-cols-5 gap-1 p-2 bg-[#16213e] sticky bottom-0 z-10 border-t border-gray-700">
+            <button data-page="home-page" class="nav-item active flex flex-col items-center p-2 rounded-lg">
+                <i data-lucide="home" class="w-6 h-6 mb-1"></i><span class="text-xs">Home</span>
+            </button>
+            <button data-page="br-page" class="nav-item flex flex-col items-center p-2 rounded-lg">
+                <i data-lucide="shield" class="w-6 h-6 mb-1"></i><span class="text-xs">BR</span>
+            </button>
+            <button data-page="matches-page" class="nav-item flex flex-col items-center p-2 rounded-lg">
+                <i data-lucide="swords" class="w-6 h-6 mb-1"></i><span class="text-xs">Matches</span>
+            </button>
+            <button data-page="cs-page" class="nav-item flex flex-col items-center p-2 rounded-lg">
+                <i data-lucide="users" class="w-6 h-6 mb-1"></i><span class="text-xs">CS</span>
+            </button>
+            <button data-page="results-page" class="nav-item flex flex-col items-center p-2 rounded-lg">
+                <i data-lucide="trophy" class="w-6 h-6 mb-1"></i><span class="text-xs">Results</span>
+            </button>
+        </nav>
+
+    </div>
+
+    <!-- Modals -->
+    <div id="modal-container" class="hidden"></div>
+
+
+    <script>
+        // --- LUCIDE ICONS ---
+        lucide.createIcons();
+
+        // --- PAGE NAVIGATION ---
+        const pages = document.querySelectorAll('.page');
+        const navButtons = document.querySelectorAll('.nav-item');
+
+        function showPage(pageId) {
+            pages.forEach(page => {
+                page.classList.toggle('active', page.id === pageId);
+            });
+            navButtons.forEach(button => {
+                button.classList.toggle('active', button.dataset.page === pageId);
+            });
+            window.scrollTo(0, 0);
+        }
+
+        navButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                showPage(button.dataset.page);
+            });
+        });
+        
+        // --- HEADER ICON NAVIGATION ---
+        document.getElementById('profile-icon').addEventListener('click', () => showPage('profile-page'));
+        document.getElementById('wallet-icon').addEventListener('click', () => {
+            showPage('profile-page');
+            // Smooth scroll to wallet section
+            setTimeout(() => {
+                document.getElementById('wallet-section').scrollIntoView({ behavior: 'smooth' });
+            }, 100);
+        });
+
+        // --- HOME PAGE SHORTCUTS ---
+        document.getElementById('go-to-matches').addEventListener('click', () => showPage('matches-page'));
+        document.getElementById('go-to-br').addEventListener('click', () => showPage('br-page'));
+        document.getElementById('go-to-cs').addEventListener('click', () => showPage('cs-page'));
+
+        // --- MODAL HANDLING ---
+        const modalContainer = document.getElementById('modal-container');
+
+        function showModal(content) {
+            modalContainer.innerHTML = content;
+            modalContainer.classList.remove('hidden');
+            
+            modalContainer.querySelectorAll('.close-modal').forEach(btn => {
+                btn.addEventListener('click', closeModal);
+            });
+            lucide.createIcons();
+        }
+
+        function closeModal() {
+            modalContainer.classList.add('hidden');
+            modalContainer.innerHTML = '';
+        }
+
+        modalContainer.addEventListener('click', (e) => {
+            if (e.target.id === 'modal-container' || e.target.classList.contains('modal-backdrop')) {
+                closeModal();
+            }
+        });
+
+        // --- JOIN FLOW ---
+        document.querySelectorAll('.join-match-btn').forEach(button => {
+            button.addEventListener('click', (e) => {
+                const type = e.target.dataset.type;
+                const fee = e.target.dataset.fee;
+
+                if (fee === 'ads') {
+                    showAdWallModal();
+                } else if (type.includes('squad') || type.includes('duo')) {
+                    showTeamEntryModal(type, fee);
+                } else {
+                    showPaymentModal(type, fee);
+                }
+            });
+        });
+
+        function showAdWallModal() {
+            const modalContent = `
+                <div class="modal-backdrop">
+                    <div class="modal-content text-center">
+                        <h3 class="font-bold text-lg mb-2">Watch Ads to Play</h3>
+                        <p class="text-gray-400 mb-4">You need to watch 5 video ads to get a free entry ticket.</p>
+                        <div class="flex items-center justify-center space-x-2 mb-4">
+                            <i data-lucide="film" class="w-6 h-6 text-blue-400"></i>
+                            <div class="w-full bg-gray-600 rounded-full h-4">
+                               <div class="bg-blue-500 h-4 rounded-full" style="width: 20%"></div>
+                            </div>
+                            <span class="font-bold">1/5</span>
+                        </div>
+                        <p class="text-xs text-gray-500 mb-4">A new ad will play after the current one finishes.</p>
+                        <button class="w-full btn-primary">Start Watching</button>
+                        <button class="close-modal mt-2 text-gray-400 text-sm">Cancel</button>
+                    </div>
+                </div>
+            `;
+            showModal(modalContent);
+        }
+
+        function showPaymentModal(type, fee) {
+            const modalContent = `
+                <div class="modal-backdrop">
+                    <div class="modal-content">
+                        <h3 class="font-bold text-lg mb-2">Confirm Entry</h3>
+                        <p class="text-gray-400 mb-4">You are about to join a ${type.replace('-', ' ')} match.</p>
+                        <div class="bg-[#16213e] p-4 rounded-lg flex justify-between items-center mb-4">
+                            <span class="text-gray-300">Entry Fee:</span>
+                            <span class="font-bold text-2xl text-yellow-400">₹${fee}</span>
+                        </div>
+                        <div class="bg-[#16213e] p-4 rounded-lg flex justify-between items-center mb-4">
+                            <span class="text-gray-300">Your Balance:</span>
+                            <span class="font-bold text-xl text-green-400">₹550.00</span>
+                        </div>
+                        <button class="w-full btn-primary" onclick="showConfirmation('Payment Successful!', 'You have joined the match.')">Pay ₹${fee} from Wallet</button>
+                        <button class="close-modal mt-2 text-gray-400 text-sm w-full text-center">Cancel</button>
+                    </div>
+                </div>
+            `;
+            showModal(modalContent);
+        }
+        
+        function showTeamEntryModal(type, fee) {
+            const modalContent = `
+                <div class="modal-backdrop">
+                    <div class="modal-content">
+                        <h3 class="font-bold text-lg mb-4">Squad Entry</h3>
+                        <div class="space-y-4">
+                           <div>
+                                <label class="text-sm font-bold text-gray-400 block mb-1">Team Name</label>
+                                <input type="text" placeholder="e.g. The Booyah Crew" class="w-full bg-[#16213e] p-3 rounded-lg border border-gray-600 focus:outline-none focus:border-[#e94560]">
+                           </div>
+                           <div>
+                                <label class="text-sm font-bold text-gray-400 block mb-1">Payment Option</label>
+                                <select class="w-full bg-[#16213e] p-3 rounded-lg border border-gray-600 focus:outline-none focus:border-[#e94560]">
+                                    <option>I will pay the full amount (₹${fee})</option>
+                                    <option>Each player pays their share</option>
+                                </select>
+                           </div>
+                           <p class="text-xs text-gray-500">If you pay the full amount, you will receive a team code to share with your teammates. They can use this code to join for free.</p>
+                           <button class="w-full btn-primary" onclick="showTeamCodeModal()">Create Team & Pay ₹${fee}</button>
+                           <hr class="border-gray-600 my-4">
+                           <div>
+                                <label class="text-sm font-bold text-gray-400 block mb-1">Have a Team Code?</label>
+                                <input type="text" placeholder="Enter team code" class="w-full bg-[#16213e] p-3 rounded-lg border border-gray-600 focus:outline-none focus:border-[#e94560]">
+                           </div>
+                           <button class="w-full btn-secondary rounded-lg p-3">Join with Code</button>
+                           <button class="close-modal mt-2 text-gray-400 text-sm w-full text-center">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            showModal(modalContent);
+        }
+
+        function showTeamCodeModal() {
+            const teamCode = 'B98-' + Math.random().toString(36).substr(2, 6).toUpperCase();
+            const modalContent = `
+                <div class="modal-backdrop">
+                    <div class="modal-content text-center">
+                        <i data-lucide="party-popper" class="w-16 h-16 text-green-400 mx-auto mb-4"></i>
+                        <h3 class="font-bold text-lg mb-2">Team Created!</h3>
+                        <p class="text-gray-400 mb-4">Share this code with your teammates:</p>
+                        <div class="bg-[#16213e] p-4 rounded-lg flex items-center justify-center space-x-4 mb-4">
+                            <span id="team-code" class="font-bold text-2xl tracking-widest text-yellow-400">${teamCode}</span>
+                            <button onclick="copyToClipboard('${teamCode}')"><i data-lucide="copy" class="w-6 h-6 text-gray-300"></i></button>
+                        </div>
+                        <button class="close-modal w-full btn-primary">Done</button>
+                    </div>
+                </div>
+            `;
+            showModal(modalContent);
+        }
+
+        function showConfirmation(title, message) {
+             const modalContent = `
+                <div class="modal-backdrop">
+                    <div class="modal-content text-center">
+                        <i data-lucide="check-circle-2" class="w-16 h-16 text-green-400 mx-auto mb-4"></i>
+                        <h3 class="font-bold text-lg mb-2">${title}</h3>
+                        <p class="text-gray-400 mb-4">${message}</p>
+                        <button class="close-modal w-full btn-primary">Okay</button>
+                    </div>
+                </div>
+            `;
+            showModal(modalContent);
+        }
+        
+        function copyToClipboard(text) {
+            const el = document.createElement('textarea');
+            el.value = text;
+            document.body.appendChild(el);
+            el.select();
+            document.execCommand('copy');
+            document.body.removeChild(el);
+            showConfirmation('Copied!', 'Team code has been copied to clipboard.');
+        }
+        
+        // --- WALLET MODALS ---
+        function showDepositModal() {
+            const modalContent = `
+                <div class="modal-backdrop">
+                    <div class="modal-content">
+                        <h3 class="font-bold text-lg mb-4">Add Money to Wallet</h3>
+                        <div>
+                            <label class="text-sm font-bold text-gray-400 block mb-1">Amount (₹)</label>
+                            <input type="number" placeholder="Enter amount" class="w-full bg-[#16213e] p-3 rounded-lg border border-gray-600 focus:outline-none focus:border-[#e94560]">
+                        </div>
+                        <div class="flex gap-2 mt-2">
+                           <button class="flex-1 bg-[#16213e] border border-gray-600 rounded-md p-2 text-sm">₹100</button>
+                           <button class="flex-1 bg-[#16213e] border border-gray-600 rounded-md p-2 text-sm">₹200</button>
+                           <button class="flex-1 bg-[#16213e] border border-gray-600 rounded-md p-2 text-sm">₹500</button>
+                        </div>
+                        <h4 class="font-bold mt-4 mb-2">Payment Method</h4>
+                        <div class="space-y-2">
+                           <div class="bg-[#16213e] p-3 rounded-lg flex justify-between items-center"><span>UPI / PhonePe / GPay</span> <i data-lucide="chevron-right"></i></div>
+                           <div class="bg-[#16213e] p-3 rounded-lg flex justify-between items-center"><span>Paytm</span> <i data-lucide="chevron-right"></i></div>
+                        </div>
+                        <button class="w-full btn-primary mt-4" onclick="showConfirmation('Deposit Successful!', 'Amount has been added to your wallet.')">Proceed to Add Money</button>
+                        <button class="close-modal mt-2 text-gray-400 text-sm w-full text-center">Cancel</button>
+                    </div>
+                </div>
+            `;
+            showModal(modalContent);
+        }
+
+        function showWithdrawModal() {
+            const modalContent = `
+                <div class="modal-backdrop">
+                    <div class="modal-content">
+                        <h3 class="font-bold text-lg mb-4">Withdraw Money</h3>
+                        <div class="bg-[#16213e] p-4 rounded-lg text-center mb-4">
+                            <p class="text-gray-400">Available to Withdraw</p>
+                            <p class="text-3xl font-extrabold text-green-400">₹550.00</p>
+                        </div>
+                        <div>
+                            <label class="text-sm font-bold text-gray-400 block mb-1">Amount to Withdraw (₹)</label>
+                            <input type="number" placeholder="Enter amount" class="w-full bg-[#16213e] p-3 rounded-lg border border-gray-600 focus:outline-none focus:border-[#e94560]">
+                        </div>
+                        <h4 class="font-bold mt-4 mb-2">Withdraw to Bank Account</h4>
+                        <div class="text-sm text-gray-300 bg-[#16213e] p-3 rounded-lg space-y-1">
+                           <p><strong>A/C Holder:</strong> Subhajit Gorai</p>
+                           <p><strong>A/C No:</strong> **** **** 8218</p>
+                           <p><strong>IFSC:</strong> SBIN0014069</p>
+                        </div>
+                        <button class="w-full btn-primary mt-4" onclick="showConfirmation('Withdrawal Requested', 'Your request is being processed. It may take up to 24 hours.')">Request Withdraw</button>
+                        <button class="close-modal mt-2 text-gray-400 text-sm w-full text-center">Cancel</button>
+                    </div>
+                </div>
+            `;
+            showModal(modalContent);
+        }
+
+        // --- PROFILE PAGE BUTTONS ---
+        document.getElementById('support-btn').addEventListener('click', () => {
+            const modalContent = `
+                <div class="modal-backdrop">
+                    <div class="modal-content">
+                        <h3 class="font-bold text-lg mb-4">Customer Support</h3>
+                        <p class="text-gray-400 mb-4">For any issues, cheating reports, or questions, please contact us. We are available 24/7.</p>
+                        <div class="bg-[#16213e] p-4 rounded-lg space-y-3">
+                            <div class="flex items-center space-x-3">
+                                <i data-lucide="instagram" class="w-6 h-6 text-[#e94560]"></i>
+                                <div>
+                                    <p class="text-sm text-gray-400">Instagram</p>
+                                    <p class="font-semibold">subhajit.gorai.779205</p>
+                                </div>
+                            </div>
+                             <div class="flex items-center space-x-3">
+                                <i data-lucide="user" class="w-6 h-6 text-[#e94560]"></i>
+                                <div>
+                                    <p class="text-sm text-gray-400">Contact Person</p>
+                                    <p class="font-semibold">Subhajit Gorai</p>
+                                </div>
+                            </div>
+                        </div>
+                        <h4 class="font-bold mt-4 mb-2">Admin Payment Info (For Reference)</h4>
+                        <div class="text-xs text-gray-400 bg-[#16213e] p-4 rounded-lg space-y-2">
+                           <p><strong>UPI:</strong> dipgorai143@oksbi</p>
+                           <p><strong>Bank:</strong> A/C 33445668218, IFSC SBIN0014069</p>
+                           <p class="text-red-400 mt-2">Note: This is admin info. Do not send payments here directly.</p>
+                        </div>
+                        <button class="close-modal w-full btn-primary mt-4">Close</button>
+                    </div>
+                </div>
+            `;
+            showModal(modalContent);
+        });
+
+        document.getElementById('deposit-btn').addEventListener('click', showDepositModal);
+        document.getElementById('withdraw-btn').addEventListener('click', showWithdrawModal);
+        
+        // Initialize on first load
+        showPage('home-page');
+
+    </script>
+</body>
+</html>
