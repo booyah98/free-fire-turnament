@@ -1,0 +1,21 @@
+name: Deploy Static HTML to GitHub Pages # This name will appear in your Actions tab
+
+on:
+  push:
+    branches:
+      - main # Replace with your main branch name (usually 'main' or 'master')
+  workflow_dispatch: # Allows you to manually trigger this workflow
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4 # Official action for GitHub Pages
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: . # This '.' means files will be deployed from your repository's root folder
