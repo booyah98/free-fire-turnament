@@ -6,11 +6,10 @@ on:
       - main # আপনার রিপোজিটরির মূল ব্রাঞ্চের নাম দিন (সাধারণত 'main' বা 'master')
   workflow_dispatch:
 
-# Add permissions here
 permissions:
-  contents: read # Git repository থেকে ফাইল পড়ার অনুমতি
-  pages: write   # GitHub Pages এ ডিপ্লয় করার অনুমতি
-  id-token: write # OIDC (OpenID Connect) টোকেন ব্যবহার করার অনুমতি
+  contents: read
+  pages: write
+  id-token: write
 
 jobs:
   deploy:
@@ -26,12 +25,10 @@ jobs:
         uses: actions/configure-pages@v5
 
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v4
+        uses: actions/upload-pages-artifact@v3 # এখানে v4 থেকে v3 করা হয়েছে
         with:
-          path: . # এই '.' মানে আপনার রিপোজিটরির মূল ফোল্ডার থেকে ফাইলগুলো আপলোড হবে।
+          path: .
 
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
-        # publish_dir ইনপুটটি এখান থেকে সরিয়ে দেওয়া হয়েছে কারণ এটি দরকার নেই।
-        # এটি এখন 'upload-pages-artifact' ধাপ থেকে ফাইলগুলো পাবে।
