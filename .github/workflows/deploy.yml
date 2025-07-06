@@ -1,21 +1,37 @@
-name: Deploy Static HTML to GitHub Pages # This name will appear in your Actions tab
+name: Deploy Static HTML to GitHub Pages
 
 on:
   push:
     branches:
-      - main # Replace with your main branch name (usually 'main' or 'master')
-  workflow_dispatch: # Allows you to manually trigger this workflow
+      - main # আপনার রিপোজিটরির মূল ব্রাঞ্চের নাম দিন (সাধারণত 'main' বা 'master')
+  workflow_dispatch:
+
+# Add permissions here
+permissions:
+  contents: read # Git repository থেকে ফাইল পড়ার অনুমতি
+  pages: write   # GitHub Pages এ ডিপ্লয় করার অনুমতি
+  id-token: write # OIDC (OpenID Connect) টোকেন ব্যবহার করার অনুমতি
 
 jobs:
   deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: . # এই '.' মানে আপনার রিপোজিটরির মূল ফোল্ডার থেকে ফাইলগুলো আপলোড হবে।
+
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4 # Official action for GitHub Pages
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: . # This '.' means files will be deployed from your repository's root folder
+        uses: actions/deploy-pages@v4
+        # publish_dir ইনপুটটি এখান থেকে সরিয়ে দেওয়া হয়েছে কারণ এটি দরকার নেই।
+        # এটি এখন 'upload-pages-artifact' ধাপ থেকে ফাইলগুলো পাবে।
